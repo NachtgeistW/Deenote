@@ -20,7 +20,7 @@ public class Utility
     public static RectTransform linkLineParent;
     public static LinePool linePool;
     public static Transform lineCanvas;
-    public static void GetInGameNoteIDs(Chart chart, ref List<int> noteIDs)
+    public static void GetInGameNoteIDs(ChartV2 chart, ref List<int> noteIDs)
     {
         int id = -1;
         while (noteIDs.Count > 0) noteIDs.RemoveAt(0);
@@ -206,9 +206,9 @@ public class Utility
         i = j + 1;
         return result;
     }
-    public static Chart JCharttoChart(JSONChart jchart)
+    public static ChartV2 JCharttoChart(JSONChart jchart)
     {
-        Chart chart = new Chart
+        ChartV2 chart = new ChartV2
         {
             speed = jchart.speed
         };
@@ -289,7 +289,7 @@ public class Utility
         }
         return jchart;
     }
-    public static void WriteCharttoJSON(Chart chart, FileStream fs)
+    public static void WriteCharttoJSON(ChartV2 chart, FileStream fs)
     {
         //Write the file under Deemo 3.0 standard
         StreamWriter sw = new StreamWriter(fs);
@@ -343,10 +343,16 @@ public class Utility
         sw.Flush();
         sw.Close();
     }
-    public static Chart CopyChart(Chart chart)
+    public static ChartV2 CopyChart(ChartV2 chart)
     {
-        Chart copy = new Chart();
-        foreach (float time in chart.beats) copy.beats.Add(time);
+        ChartV2 copy = new ChartV2();
+        foreach (TempoEvent tempoEvent in chart.tempoEvents)
+            copy.tempoEvents.Add(new TempoEvent
+            {
+                bpm = tempoEvent.bpm,
+                free = tempoEvent.free,
+                time = tempoEvent.time
+            });
         copy.difficulty = chart.difficulty;
         copy.level = chart.level;
         foreach (Note note in chart.notes)

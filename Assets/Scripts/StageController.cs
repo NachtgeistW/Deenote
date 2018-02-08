@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class StageController : MonoBehaviour
 {
+    public static StageController instance;
     //-Stage activation-
     public bool stageActivated = false;
     //-Sounds-
@@ -14,7 +15,7 @@ public class StageController : MonoBehaviour
     public Toggle lightEffectToggle;
     public bool lightEffectState = true;
     //-Note controlling-
-    public Chart chart;
+    public ChartV2 chart;
     public int diff;
     private List<NoteController> notes = new List<NoteController>();
     public NoteObjectPool notePool;
@@ -24,7 +25,7 @@ public class StageController : MonoBehaviour
     public bool forceToPlaceNotes = false;
     private float antiZureTime = 0.0f;
     //-T grid controlling-
-    public TGridID prevLineID;
+    public int prevLineID;
     private List<TGridController> tGrids = new List<TGridController>();
     public TGridObjectPool tGridPool;
     //-Combo and score effect-
@@ -85,7 +86,7 @@ public class StageController : MonoBehaviour
         while (tGrids.Count > 0) tGrids[0].ForceReturn();
         prevNoteID = -1;
         returnNoteID = -1;
-        prevLineID = new TGridID(0, -1, editor.tGrid);
+        prevLineID = new int(0, -1, editor.tGrid);
     }
     public void ToggleLightEffect()
     {
@@ -128,7 +129,7 @@ public class StageController : MonoBehaviour
         musicSource.time = timeSlider.value;
         musicPlayState = false;
     }
-    public void InitializeStage(Project initProj, int difficulty, ProjectController projCtrl)
+    public void InitializeStage(ProjectV2 initProj, int difficulty, ProjectController projCtrl)
     {
         projectController = projCtrl;
         notePool.Initialize();
@@ -168,7 +169,7 @@ public class StageController : MonoBehaviour
         note.gameObject.transform.SetParent(noteParentTransform);
         note.Activate(noteID, chart.notes[noteID], this, pianoSoundsLoader);
     }
-    private TGridController InitTGridObject(TGridID id)
+    private TGridController InitTGridObject(int id)
     {
         TGridController tGrid;
         tGrid = tGridPool.GetObject();
@@ -177,7 +178,7 @@ public class StageController : MonoBehaviour
         tGrid.Activate(id, TGridTime(id), this);
         return tGrid;
     }
-    private float TGridTime(TGridID id)
+    private float TGridTime(int id)
     {
         float curLineTime, dTime = 0.0f;
         curLineTime = chart.beats[id.id];
@@ -207,7 +208,7 @@ public class StageController : MonoBehaviour
     {
         if (id > prevNoteID) prevNoteID = id;
     }
-    public void SetPrevLineID(TGridID id)
+    public void SetPrevLineID(int id)
     {
         if (id > prevLineID) prevLineID = id;
     }
@@ -225,11 +226,11 @@ public class StageController : MonoBehaviour
             for (i = prev + 1; i < cur; i++) InitNoteObject(i);
         }
         {
-            TGridID prev, cur, i;
+            int prev, cur, i;
             if (tGrids.Count > 0) prev = tGrids[tGrids.Count - 1].id;
             else prev = prevLineID;
             cur = prev; cur++;
-            for (; cur <= new TGridID(chart.beats.Count - 1, 0, editor.tGrid); cur++)
+            for (; cur <= new int(chart.beats.Count - 1, 0, editor.tGrid); cur++)
                 if (TGridTime(cur) > timeSlider.value + Parameters.NoteFallTime(chartPlaySpeed))
                     break;
             i = prev; i++;
@@ -247,7 +248,7 @@ public class StageController : MonoBehaviour
         for (returnNoteID = prevNoteID; returnNoteID >= 0; returnNoteID--)
             if (chart.notes[returnNoteID].time + Parameters.noteReturnTime <= timeSlider.value)
                 break;
-        for (prevLineID = new TGridID(0, 0, editor.tGrid); prevLineID <= new TGridID(chart.beats.Count - 1, 0, editor.tGrid); prevLineID++)
+        for (prevLineID = new int(0, 0, editor.tGrid); prevLineID <= new int(chart.beats.Count - 1, 0, editor.tGrid); prevLineID++)
             if (TGridTime(prevLineID) > timeSlider.value)
                 break;
         prevLineID--;
@@ -505,5 +506,9 @@ public class StageController : MonoBehaviour
                 PlaceNewObjects();
         }
         Shortcuts();
+    }
+    private void Awake()
+    {
+        instance = this;
     }
 }

@@ -9,6 +9,7 @@ using UnityEngine.Events;
 public class ProjectController : MonoBehaviour
 {
     //-Declaration-
+    public static ProjectController instance;
     //-Panel control buttons-
     public GameObject filePanelButton;
     public GameObject infoPanelButton;
@@ -49,7 +50,7 @@ public class ProjectController : MonoBehaviour
     private string projectFileName; //Name of the project file
     private string projectFolder; //Where the project file is at
     private FileInfo songFile; //Where the song is saved, only used when loading song for the 1st time
-    public Project project = null; //The project itself
+    public ProjectV2 project = null; //The project itself
     //-Other scripts-
     public StageController stage;
     public ProjectSaveLoad projectSL;
@@ -169,7 +170,7 @@ public class ProjectController : MonoBehaviour
     }
     public void ConfirmButtonPressed() //Project - New - Confirm
     {
-        project = new Project();
+        project = new ProjectV2();
         if (songFile.Extension == ".wav" || songFile.Extension == ".ogg")
         {
             WWW www;
@@ -189,9 +190,9 @@ public class ProjectController : MonoBehaviour
             songAudioClip.LoadAudioData();
         }
         project.songName = songFile.Name;
-        project.charts = new Chart[4];
+        project.charts = new ChartV2[4];
         for (int i = 0; i < 4; i++)
-            project.charts[i] = new Chart
+            project.charts[i] = new ChartV2
             {
                 difficulty = i,
                 level = "1"
@@ -211,7 +212,7 @@ public class ProjectController : MonoBehaviour
         if (project != null)
         {
             if (currentInStage != -1)
-                foreach (Chart chart in project.charts) chart.beats = project.charts[currentInStage].beats;
+                foreach (ChartV2 chart in project.charts) chart.tempoEvents = project.charts[currentInStage].tempoEvents;
             StartCoroutine(projectSL.SaveProjectIntoFile(project, songAudioClip, projectFolder + projectFileName + ".dsproj"));
         }
     }
@@ -230,7 +231,7 @@ public class ProjectController : MonoBehaviour
         if (project != null)
         {
             if (currentInStage != -1)
-                foreach (Chart chart in project.charts) chart.beats = project.charts[currentInStage].beats;
+                foreach (ChartV2 chart in project.charts) chart.tempoEvents = project.charts[currentInStage].tempoEvents;
             projectSL.SaveProjectIntoFile(project, songAudioClip, asFileFullName);
         }
     }
@@ -440,7 +441,7 @@ public class ProjectController : MonoBehaviour
         stage.ClearStage();
         stage.InitializeStage(project, diff, this);
         if (currentInStage != -1)
-            foreach (Chart chart in project.charts) chart.beats = project.charts[currentInStage].beats;
+            foreach (ChartV2 chart in project.charts) chart.tempoEvents = project.charts[currentInStage].tempoEvents;
         currentInStage = diff;
     }
     //-Settings Panel-
@@ -588,5 +589,9 @@ public class ProjectController : MonoBehaviour
     {
         Application.CancelQuit();
         FindObjectOfType<RightScrollViewController>().OpenQuitScreen();
+    }
+    private void Awake()
+    {
+        instance = this;
     }
 }

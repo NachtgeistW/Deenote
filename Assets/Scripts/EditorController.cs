@@ -4,9 +4,10 @@ using UnityEngine.UI;
 
 public class EditorController : MonoBehaviour
 {
-    //-Editor activation-
+    public static EditorController instance;
+    // -Editor activation-
     public bool activated = false;
-    //Grid
+    // Grid
     public int xGrid = 0, tGrid = 0;
     public float xGridOffset = 0.0f;
     private List<XGrid> xGrids = new List<XGrid>();
@@ -15,17 +16,20 @@ public class EditorController : MonoBehaviour
     public InputField xGridOffsetInputField;
     public Slider xGridOffsetSlider;
     public Toggle borderToggle;
-    //Beat lines
+    // Beat lines
     private float fillFrom, fillTo, fillWithBPM;
     public InputField fillFromInputField;
     public InputField fillToInputField;
     public InputField fillWithBPMInputField;
-    //Chart
-    public Chart chart;
+    // Tempo editor
+    private bool tempoMode = false;
+    private List<TGridInfo> tGridInfos;
+    // Chart
+    public ChartV2 chart;
     public int maxUndoStep = 100;
-    private List<Chart> undoCharts = new List<Chart>();
+    private List<ChartV1> undoCharts = new List<ChartV1>();
     private int currentStep = 0;
-    //Note Selection
+    // Note Selection
     public List<NoteSelect> noteSelect = new List<NoteSelect>();
     private List<List<NoteSelect>> undoNoteSelect = new List<List<NoteSelect>>();
     private int amountSelected = 0;
@@ -119,6 +123,7 @@ public class EditorController : MonoBehaviour
         if (gridNumber < 0) gridNumber = 0;
         tGrid = gridNumber;
         tGridInputField.text = "" + tGrid;
+        UpdateTGrid();
         stage.ResetStage();
     }
     public void XGridOffsetInput(string input)
@@ -172,7 +177,40 @@ public class EditorController : MonoBehaviour
     {
         noteIndicatorsToggler.SetActive(isOn);
     }
-    //-Barlines-
+    //-Tempo Settings-
+    public void UpdateTGrid()
+    {
+        while (tGridInfos.Count > 0) tGridInfos.RemoveAt(0);
+        if (tGrid == 0) return;
+        bool free = true;
+        float rate = 0.0f;
+        for (int i = 0; i < chart.tempoEvents.Count; i++)
+        {
+            TempoEvent tempoEvent = chart.tempoEvents[i];
+            if (tempoEvent.free)
+            {
+                TGridInfo info = new TGridInfo
+                {
+                    time = tempoEvent.time,
+                    type = TGridInfo.TGridType.FreeTempo
+                };
+                tGridInfos.Add(info);
+                free = true;
+            }
+            else
+            {
+                TGridInfo info = new TGridInfo
+                {
+                    time = tempoEvent.time,
+                    type = TGridInfo.TGridType.ChangeTempo
+                };
+                if (free) rate = 0.0f;
+                free = false;
+                int start=
+            }
+        }
+    }
+    
     public void FillBeatLines()
     {
         int i = 0, time = 0;
@@ -1336,5 +1374,9 @@ public class EditorController : MonoBehaviour
             if (interpolateMode) UpdateCurve();
             MouseActions();
         }
+    }
+    private void Awake()
+    {
+        instance = this;
     }
 }

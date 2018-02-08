@@ -2,7 +2,7 @@
 
 public class TGridController: MonoBehaviour
 {
-    public TGridID id;
+    public TGridInfo info;
     private float time;
     private float curTime;
     public StageController stage;
@@ -12,14 +12,14 @@ public class TGridController: MonoBehaviour
         if (time > curTime)
         {
             grid.SetActive(false);
-            stage.SetPrevLineID(id);
+            stage.SetPrevLineID(info.id);
             stage.ReturnLine(this);
         }
     }
     public void ForceReturn()
     {
         grid.SetActive(false);
-        stage.SetPrevLineID(id);
+        stage.SetPrevLineID(info.id);
         stage.ReturnLine(this);
     }
     private void PositionUpdate()
@@ -30,33 +30,37 @@ public class TGridController: MonoBehaviour
             new Vector3(-Parameters.maximumNoteWidth * 2, 0, z + 32),
             new Vector3(Parameters.maximumNoteWidth * 2, 0, z + 32)
         );
-        if (id.sub == 0)
-        {
-            grid.Color = new Color(0.5f, 0.0f, 0.0f);
-            grid.AlphaMultiplier = 1.0f;
-        }
-        else
-        {
-            grid.Color = new Color(42 / 255.0f, 42 / 255.0f, 42 / 255.0f);
-            grid.AlphaMultiplier = 0.75f;
-        }
+        ColorUpdate();
     }
-    public void Activate(TGridID lineID, float lineTime, StageController stageController)
+    public void Activate(TGridInfo info, StageController stageController)
     {
-        id = lineID;
-        curTime = lineTime;
+        this.info = info;
+        curTime = info.time;
         stage = stageController;
-        if (id.sub == 0)
-        {
-            grid.Color = new Color(0.5f, 0.0f, 0.0f);
-            grid.AlphaMultiplier = 1.0f;
-        }
-        else
-        {
-            grid.Color = new Color(42 / 255.0f, 42 / 255.0f, 42 / 255.0f);
-            grid.AlphaMultiplier = 0.75f;
-        }
+        ColorUpdate();
         Update();
+    }
+    private void ColorUpdate()
+    {
+        switch (info.type)
+        {
+            case TGridInfo.TGridType.ChangeTempo:
+                grid.Color = new Color(0.0f, 0.0f, 0.5f);
+                grid.AlphaMultiplier = 1.0f;
+                break;
+            case TGridInfo.TGridType.FreeTempo:
+                grid.Color = new Color(0.0f, 0.5f, 0.0f);
+                grid.AlphaMultiplier = 1.0f;
+                break;
+            case TGridInfo.TGridType.Beat:
+                grid.Color = new Color(0.5f, 0.0f, 0.0f);
+                grid.AlphaMultiplier = 1.0f;
+                break;
+            case TGridInfo.TGridType.SubBeat:
+                grid.Color = new Color(42 / 255.0f, 42 / 255.0f, 42 / 255.0f);
+                grid.AlphaMultiplier = 0.75f;
+                break;
+        }
     }
     private void Update()
     {
@@ -66,51 +70,18 @@ public class TGridController: MonoBehaviour
     }
 }
 
-public class TGridID
+public class TGridInfo
 {
-    public int id;
-    public int sub;
-    public int maxSub;
-    public TGridID(int newId, int newSub, int newMaxSub)
+    public int id = 0;
+    public int eventId = 0;
+    public float time;
+    public float bpm = 0.0f;
+    public enum TGridType
     {
-        id = newId;
-        sub = newSub;
-        maxSub = newMaxSub;
-    }
-    public static TGridID operator ++(TGridID cur)
-    {
-        TGridID res = new TGridID(cur.id, cur.sub + 1, cur.maxSub);
-        if (res.sub >= res.maxSub) { res.id++; res.sub -= res.maxSub; }
-        return res;
-    }
-    public static TGridID operator --(TGridID cur)
-    {
-        TGridID res = new TGridID(cur.id, cur.sub - 1, cur.maxSub);
-        if (res.sub < 0) { res.id--; res.sub += res.maxSub; }
-        return res;
-    }
-    public static bool operator <(TGridID a, TGridID b)
-    {
-        if (a.id < b.id) return true;
-        if (a.id > b.id) return false;
-        return a.sub < b.sub;
-    }
-    public static bool operator >(TGridID a, TGridID b)
-    {
-        if (a.id > b.id) return true;
-        if (a.id < b.id) return false;
-        return a.sub > b.sub;
-    }
-    public static bool operator <=(TGridID a, TGridID b)
-    {
-        return !(a > b);
-    }
-    public static bool operator >=(TGridID a, TGridID b)
-    {
-        return !(a < b);
-    }
-    public static implicit operator TGridID(int id)
-    {
-        return new TGridID(id, 0, 0);
-    }
+        ChangeTempo,
+        FreeTempo,
+        Beat,
+        SubBeat
+    };
+    public TGridType type;
 }

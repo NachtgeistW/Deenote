@@ -183,7 +183,7 @@
 		F0014 * 同步四张谱面的拍线信息
 2017-11-14
 	Planned
-		N0051 将选定note组做关于中线/note组中间位置的镜像
+		N0051 * 将选定note组做关于中线的镜像
 		N0052 * 按WASD对选中note进行微调(1ms/0.01)
 		N0053 * 按Alt+WASD对选中note进行粗调(10ms/0.1)
 		N0054 * 按Shift+WASD将选中note移动当前一格距离
@@ -282,22 +282,35 @@
 		N0069 * 可调窗口分辨率
 2018-01-07
 	Planned
-		N0070 * 暴力解决退出程序时崩溃和卡死的问题
+		F0022 * 暴力解决退出程序时崩溃和卡死的问题
 	Finished
 		N0069 可调窗口分辨率
-		N0070 暴力解决退出程序时崩溃和卡死的问题
+		F0022 暴力解决退出程序时崩溃和卡死的问题
 2018-01-10
 	Planned
-		F0022 * 直接点叉退出程序时也会显示"是否退出"的对话框
-		F0023 * 点击Open会导致NullReferenceException的问题
+		F0023 * 直接点叉退出程序时也会显示"是否退出"的对话框
+		F0024 * 点击Open会导致NullReferenceException的问题
 	Finished
-		F0022 直接点叉退出程序时也会显示"是否退出"的对话框
-		F0023 点击Open会导致NullReferenceException的问题
+		F0023 直接点叉退出程序时也会显示"是否退出"的对话框
+		F0024 点击Open会导致NullReferenceException的问题
 2018-01-12
 	Planned
-		F0024 * 修复与黄条有关的各种bug
-		F0025 * 修复导出JSON时文件名错误的bug
+		F0025 * 修复与黄条有关的各种bug
+		F0026 * 修复导出JSON时文件名错误的bug
 	Finished
-		F0024 修复与黄条有关的各种bug
-		F0025 修复导出JSON时文件名错误的bug
-		
+		F0025 修复与黄条有关的各种bug
+		F0026 修复导出JSON时文件名错误的bug
+2018-01-13
+	Finished
+		N0058 选中note信息栏加入ID项, 可以输入ID来选中note
+2018-01-28
+	Planned
+		N0070 * 更改note大小的快捷键
+		N0071 * 按住Shift粘贴保持note横向位置
+	Finished
+		N0051 将选定note组做关于中线的镜像
+		N0070 更改note大小的快捷键
+		N0071 按住Shift粘贴保持note横向位置
+2018-01-30
+	Planned
+		N0072 更改文件格式, 更改曲速设置方法

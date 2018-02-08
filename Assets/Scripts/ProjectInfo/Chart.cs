@@ -1,13 +1,29 @@
 ﻿using System.Collections.Generic;
 
 [System.Serializable]
-public class Chart //Saves info of a single chart
+public class ChartV1 //Saves info of a single chart
 {
     public float speed = 0; //Speed value of the official charts
     public int difficulty = 0; //Difficulty 0 Easy, 1 Normal, 2 Hard, 3 Extra
     public string level = ""; //Level of the chart, for example, L
     public List<float> beats = new List<float>(); //For quantizing the note
     public List<Note> notes = new List<Note>(); //All the notes info
+}
+
+[System.Serializable]
+public class ChartV2
+{
+    public float speed = 0;
+    public int difficulty = 0;
+    public string level = "";
+    public List<TempoEvent> tempoEvents = new List<TempoEvent>(); // Events for tempo changing
+    public List<Note> notes = new List<Note>();
+}
+
+public class TempoEvent
+{
+    public float time; // If free->restricted, at what time
+    public float bpm; // Tempo after the event, not used if free = true
 }
 
 [System.Serializable]

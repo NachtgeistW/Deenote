@@ -13,7 +13,7 @@ public class JudgeLineEffectController : MonoBehaviour
             alpha = 1.0f;
         if (stage.chart != null && stage.stageActivated)
         {
-            Chart chart = stage.chart;
+            ChartV1 chart = stage.chart;
             float time = stage.timeSlider.value;
             if (stage.prevNoteID >= 0)
             {
