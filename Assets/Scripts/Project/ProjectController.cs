@@ -76,7 +76,6 @@ public class ProjectController : MonoBehaviour
 
     //UGUI
     public Dropdown ResolutionDropDown;
-    
     public UnityEvent ResolutionChange
     {
         get => ScreenResolutionSelector.resolutionChange;

@@ -6,6 +6,7 @@ using static UnityEngine.UI.Dropdown;
 
 public static class ScreenResolutionSelector
 {
+    //Only 3 opinions to select
     public static readonly IReadOnlyList<Vector2Int> PredefinedResoluion = new[]
     {
         new Vector2Int(960, 540),
@@ -44,24 +45,25 @@ public static class ScreenResolutionSelector
     //Initialize resolution dropdown
     public static void InitializeResolutionDropdown(Dropdown dropdown)
     {
-        var defaultResolution = PredefinedResoluion[0];
+        var currentResolution = new Vector2Int(Screen.currentResolution.width, Screen.currentResolution.height);
+
         var previousResolution = new Vector2Int(
-                PlayerPrefs.GetInt(WidthKey, defaultResolution.x),
-                PlayerPrefs.GetInt(HeightKey, defaultResolution.y)
+            PlayerPrefs.GetInt(WidthKey, currentResolution.x),
+            PlayerPrefs.GetInt(HeightKey, currentResolution.y)
         );
 
-        //Only 3 opinion to select
         var optionDataList = new List<OptionData>(3);
         var index = 0;
         var currentValue = -1;
         foreach (var resolution in PredefinedResoluion)
         {
             optionDataList.Add(new OptionData { text = $"{resolution.x} × {resolution.y}" });
-            if (currentValue != -1 || (resolution.x == previousResolution.x && resolution.y == previousResolution.y))
+            if (currentValue == -1 && resolution.x == previousResolution.x && resolution.y == previousResolution.y)
                 currentValue = index;
             ++index;
         }
         dropdown.options = optionDataList;
+
         dropdown.value = currentValue;
     }
 
